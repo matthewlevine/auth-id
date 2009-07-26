@@ -10,12 +10,10 @@ class HomeController(webapp.RequestHandler):
   
 class APIController(webapp.RequestHandler):
   def get(self, url):
-    
-    
     self.response.headers['Content-Type'] = 'text/plain'
     self.response.out.write(url)
     p = page.Page('http://' + url)
-    self.response.out.write(p.soup)
+    self.response.out.write([tag['href'] for tag in p.soup.findAll(attrs={'rel': 'me'})])
 
 application = webapp.WSGIApplication([
     ('/', HomeController),
