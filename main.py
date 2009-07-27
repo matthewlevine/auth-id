@@ -1,6 +1,9 @@
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.api import urlfetch
+
+import crawler
+import logging
 import page
 
 class HomeController(webapp.RequestHandler):
@@ -9,11 +12,16 @@ class HomeController(webapp.RequestHandler):
     self.response.out.write('Home page')
   
 class APIController(webapp.RequestHandler):
+  
+  #url_queue = []
+  #url_visited = []
+  
   def get(self, url):
     self.response.headers['Content-Type'] = 'text/plain'
     self.response.out.write(url)
-    p = page.Page('http://' + url)
-    self.response.out.write([tag['href'] for tag in p.soup.findAll(attrs={'rel': 'me'})])
+    c = crawler.Crawler()
+    c.crawl('http://' + url)
+    self.response.out.write(c.url_visited)
 
 application = webapp.WSGIApplication([
     ('/', HomeController),
